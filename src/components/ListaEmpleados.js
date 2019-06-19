@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import Mensaje from "./Mensaje";
-import Formulario from "./Formulario";
 
 class ListaEmpleados extends Component {
-  state = { borrado: false };
+  state = { borrado: false, type: "", search: "", place: "" };
   borrarEmpleado = e => {
     const { fetchEmpleados } = this.props;
 
@@ -35,6 +34,17 @@ class ListaEmpleados extends Component {
         console.log(err);
       });
   };
+  checkState = () => {
+    const { type, search, place } = this.state;
+    const noValido =
+      !type ||
+      type === "Choose one" ||
+      !search ||
+      !place ||
+      place === "Choose one";
+    return noValido;
+  };
+
   actualizarEmpleado = e => {
     const { updateEmpleado } = this.props;
     fetch(`empleado/${e.target.value}`)
@@ -46,10 +56,96 @@ class ListaEmpleados extends Component {
         console.log(err);
       });
   };
+  clearFilter = () => {
+    const { fetchEmpleados } = this.props;
+    this.setState({
+      type: "Choose one",
+      place: "Choose one",
+      search: ""
+    });
+    fetchEmpleados();
+  };
+  buscador = async e => {
+    e.preventDefault();
+    const { resultadoBuscador } = this.props;
+    const respuestaFetch = await fetch("/buscador", {
+      method: "POST",
+      body: JSON.stringify(this.state),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    const empleados = await respuestaFetch.json();
+    resultadoBuscador(empleados);
+  };
+  obtenerValores = e => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    this.setState({
+      [name]: value
+    });
+  };
   render() {
     return (
       <div className="table-responsive-sm">
-        <h2>Lista de empleados</h2>
+        <div className="row mb-2">
+          <div className="col-md-3">
+            <h3>Employees</h3>
+          </div>
+          <div className="col-md-9">
+            <form className="form-inline" onSubmit={this.buscador}>
+              <div className="input-group input-group-sm">
+                <div className="input-group-prepend">
+                  <label className="input-group-text">Filter</label>
+                </div>
+                <select
+                  value={this.state.type}
+                  name="type"
+                  className="custom-select"
+                  onChange={this.obtenerValores}
+                >
+                  <option>Choose one</option>
+                  <option value="name">Name</option>
+                  <option value="last_name">Last name</option>
+                  <option value="email">Email</option>
+                  <option value="phone">Phone</option>
+                </select>
+                <select
+                  value={this.state.place}
+                  name="place"
+                  onChange={this.obtenerValores}
+                  className="custom-select"
+                >
+                  <option>Choose one</option>
+                  <option value="start">Start with</option>
+                  <option value="sub">Contains</option>
+                  <option value="end">End with</option>
+                </select>
+                <input
+                  className="form-control"
+                  type="search"
+                  placeholder="Search employee"
+                  name="search"
+                  onChange={this.obtenerValores}
+                  value={this.state.search}
+                />
+                <input
+                  disabled={this.checkState()}
+                  className="btn btn-outline-success btn-sm mr-2"
+                  type="submit"
+                  value="Search"
+                />
+              </div>
+              <button
+                onClick={this.clearFilter}
+                className="btn btn-outline-primary btn-sm"
+              >
+                Clear filter
+              </button>
+            </form>
+          </div>
+        </div>
         <table className="table table-responsive-md table-hover table-sm empleados">
           <thead className="thead-dark">
             <tr>
@@ -74,7 +170,7 @@ class ListaEmpleados extends Component {
                       className="btn btn-outline-secondary btn-block btn-sm"
                       onClick={this.actualizarEmpleado}
                     >
-                      Actualizar
+                      Update
                     </button>
                     <br />
                     <button
@@ -82,7 +178,7 @@ class ListaEmpleados extends Component {
                       className="btn btn-outline-danger btn-block btn-sm"
                       onClick={this.borrarEmpleado}
                     >
-                      Borrar
+                      Delete
                     </button>
                   </td>
                 </tr>
@@ -90,9 +186,7 @@ class ListaEmpleados extends Component {
             })}
           </tbody>
         </table>
-        {this.state.borrado && (
-          <Mensaje mensaje="Empleado borrado correctamente" />
-        )}
+        {this.state.borrado && <Mensaje mensaje="Employee deleted!" />}
       </div>
     );
   }

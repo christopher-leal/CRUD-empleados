@@ -5,11 +5,13 @@ const {
   agregarEmpleado,
   modificarEmpleado,
   borrarEmpleado,
-  buscarEmpleado
+  buscarEmpleado,
+  buscador
 } = require("./empleados");
 
 router.get("/empleados", listarEmpleados);
 router.get("/empleado/:id", buscarEmpleado);
+router.post("/buscador/", buscador);
 router.post("/agregar_empleado", agregarEmpleado);
 router.put("/actualizar_empleado/:id", modificarEmpleado);
 router.delete("/borrar_empleado/:id", borrarEmpleado);

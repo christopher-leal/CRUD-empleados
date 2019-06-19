@@ -1,5 +1,6 @@
 const Empleado = require("../models/Empleados");
-
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 const listarEmpleados = async (req, res) => {
   const empleados = await Empleado.findAll();
   res.json(empleados);
@@ -11,6 +12,40 @@ const buscarEmpleado = async (req, res) => {
   });
   res.json(empleado);
 };
+const buscador = async (req, res) => {
+  const { type, search, place } = req.body;
+  let empleados;
+  switch (place) {
+    case "start":
+      empleados = await Empleado.findAll({
+        where: {
+          [type]: { [Op.startsWith]: search }
+        }
+      });
+      res.json(empleados);
+      break;
+    case "sub":
+      empleados = await Empleado.findAll({
+        where: {
+          [type]: { [Op.substring]: search }
+        }
+      });
+      res.json(empleados);
+      break;
+    case "end":
+      empleados = await Empleado.findAll({
+        where: {
+          [type]: { [Op.endsWith]: search }
+        }
+      });
+      res.json(empleados);
+
+      break;
+
+    default:
+      break;
+  }
+};
 const agregarEmpleado = async (req, res) => {
   const { name, last_name, email, phone } = req.body;
   const empleado = await Empleado.create({
@@ -19,8 +54,9 @@ const agregarEmpleado = async (req, res) => {
     email,
     phone
   });
-  res.json(empleado);
-  console.log(empleado);
+  res.json({
+    message: "Employee added"
+  });
 };
 const modificarEmpleado = async (req, res) => {
   const { id } = req.params;
@@ -55,5 +91,6 @@ module.exports = {
   agregarEmpleado,
   modificarEmpleado,
   borrarEmpleado,
-  buscarEmpleado
+  buscarEmpleado,
+  buscador
 };

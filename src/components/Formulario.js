@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Mensaje from "./Mensaje";
 import ListaEmpleados from "./ListaEmpleados";
-
 class Formulario extends Component {
   constructor() {
     super();
@@ -43,7 +42,17 @@ class Formulario extends Component {
       })
       .catch(err => console.log(err));
   };
-
+  resultadoBuscador = empleados => {
+    if (empleados) {
+      this.setState({
+        empleados
+      });
+      console.log(empleados);
+    } else {
+      // this.fetchEmpleados();
+      console.log("no hay nada");
+    }
+  };
   checkState = () => {
     const { name, last_name, email, phone } = this.state;
     const noValido = !name || !last_name || !email || !phone;
@@ -51,7 +60,7 @@ class Formulario extends Component {
   };
   agregarEmpleado = e => {
     e.preventDefault();
-    if (this.state.id == "") {
+    if (this.state.id === "") {
       fetch("/agregar_empleado", {
         method: "POST",
         body: JSON.stringify(this.state),
@@ -120,25 +129,35 @@ class Formulario extends Component {
         });
     }
   };
+  cancelUpdate = () => {
+    this.setState({
+      id: "",
+      name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      creado: false
+    });
+  };
   render() {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-md-4">
+          <div className="col-md-3">
             <div className="text-center">
-              {this.state.id == "" ? (
-                <div className="card-header">Agregar empleado</div>
+              {this.state.id === "" ? (
+                <div className="card-header">Add employee</div>
               ) : (
-                <div className="card-header">Actualizar empleado</div>
+                <div className="card-header">Update employee</div>
               )}
               <div className="card-body" />
-              <h5 className="card-title">Datos del empleado</h5>
+              <h5 className="card-title">Information</h5>
               <form onSubmit={this.agregarEmpleado}>
                 <div className="form-group">
                   <input
                     onChange={this.updateState}
                     type="text"
-                    placeholder="Nombre del empleado"
+                    placeholder="Name of the employee"
                     className="form-control"
                     name="name"
                     value={this.state.name}
@@ -148,7 +167,7 @@ class Formulario extends Component {
                   <input
                     onChange={this.updateState}
                     type="text"
-                    placeholder="Apellido del empleado"
+                    placeholder="Lastname of the employee"
                     className="form-control"
                     name="last_name"
                     value={this.state.last_name}
@@ -158,7 +177,7 @@ class Formulario extends Component {
                   <input
                     onChange={this.updateState}
                     type="text"
-                    placeholder="Email del empleado"
+                    placeholder="Email of the employee"
                     className="form-control"
                     name="email"
                     value={this.state.email}
@@ -168,39 +187,51 @@ class Formulario extends Component {
                   <input
                     onChange={this.updateState}
                     type="text"
-                    placeholder="Numero del empleado"
+                    placeholder="Phone of the employee"
                     className="form-control"
                     name="phone"
                     value={this.state.phone}
                   />
                 </div>
-                {this.state.id != "" ? (
-                  <input
-                    disabled={this.checkState()}
-                    className="btn btn-outline-primary btn-block"
-                    type="submit"
-                    value="Actualizar"
-                  />
+                {this.state.id !== "" ? (
+                  <div className="row mx-md-n1">
+                    <input
+                      disabled={this.checkState()}
+                      className="btn btn-outline-primary col px-md-3"
+                      type="submit"
+                      value="Update"
+                    />
+                    <input
+                      onClick={this.cancelUpdate}
+                      className="btn btn-outline-warning col px-md-3"
+                      type="submit"
+                      value="Cancel"
+                    />
+                  </div>
                 ) : (
                   <input
                     disabled={this.checkState()}
                     className="btn btn-outline-primary btn-block"
                     type="submit"
-                    value="Guardar"
+                    value="Save"
                   />
                 )}
               </form>
             </div>
             <br />
-            {this.state.creado && (
-              <Mensaje mensaje="Empleado agregado correctamente" />
-            )}
+            {this.state.creado &&
+              (this.state.id === "" ? (
+                <Mensaje mensaje="Employee added" />
+              ) : (
+                <Mensaje mensaje="Employee updated" />
+              ))}
           </div>
-          <div className="col-md-8">
+          <div className="col-md-9">
             <ListaEmpleados
               fetchEmpleados={this.fetchEmpleados}
               empleados={this.state.empleados}
               updateEmpleado={this.updateEmpleado}
+              resultadoBuscador={this.resultadoBuscador}
             />
           </div>
         </div>
