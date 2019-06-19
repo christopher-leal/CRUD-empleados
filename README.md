@@ -1,3 +1,16 @@
+## Descripcion del proyecto
+
+Este proyecto esta creado con create-react-app para el frontend y NodeJS para el backend con express
+para correr el servidor backend se necesita ejecutar
+
+### `node src/server`
+
+una vez levantado el servidor, iniciar con
+
+### `npm start`
+
+El servidor de react corre en el puerto 3000 y el servidor de node en el puerto 3001
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
