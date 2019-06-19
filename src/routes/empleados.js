@@ -54,9 +54,7 @@ const agregarEmpleado = async (req, res) => {
     email,
     phone
   });
-  res.json({
-    message: "Employee added"
-  });
+  res.json({ empleado });
 };
 const modificarEmpleado = async (req, res) => {
   const { id } = req.params;
@@ -75,7 +73,6 @@ const modificarEmpleado = async (req, res) => {
     }
   );
   res.json("Empleado actualizado");
-  console.log(filaAfectada);
 };
 const borrarEmpleado = async (req, res) => {
   const { id } = req.params;
@@ -83,7 +80,6 @@ const borrarEmpleado = async (req, res) => {
     where: { id }
   });
   res.json("Empleado borrado");
-  console.log(empleadoEliminado);
 };
 
 module.exports = {

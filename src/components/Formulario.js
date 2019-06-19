@@ -11,6 +11,7 @@ class Formulario extends Component {
       email: "",
       phone: "",
       creado: false,
+      noEncontrado: false,
       empleados: []
     };
   }
@@ -36,21 +37,31 @@ class Formulario extends Component {
     fetch("/empleados")
       .then(data => data.json())
       .then(empleados => {
-        this.setState({
-          empleados
-        });
+        if (Object.getOwnPropertyNames(empleados).length != 1) {
+          this.setState({
+            empleados,
+            noEncontrado: false
+          });
+        } else {
+          this.setState({
+            empleados: [],
+            noEncontrado: true
+          });
+        }
       })
       .catch(err => console.log(err));
   };
   resultadoBuscador = empleados => {
-    if (empleados) {
+    if (Object.getOwnPropertyNames(empleados).length != 1) {
       this.setState({
-        empleados
+        empleados,
+        noEncontrado: false
       });
-      console.log(empleados);
     } else {
-      // this.fetchEmpleados();
-      console.log("no hay nada");
+      this.setState({
+        empleados: [],
+        noEncontrado: true
+      });
     }
   };
   checkState = () => {
@@ -221,9 +232,9 @@ class Formulario extends Component {
             <br />
             {this.state.creado &&
               (this.state.id === "" ? (
-                <Mensaje mensaje="Employee added" />
+                <Mensaje mensaje="Employee added" clase="success" />
               ) : (
-                <Mensaje mensaje="Employee updated" />
+                <Mensaje mensaje="Employee updated" clase="primary" />
               ))}
           </div>
           <div className="col-md-9">
@@ -233,6 +244,9 @@ class Formulario extends Component {
               updateEmpleado={this.updateEmpleado}
               resultadoBuscador={this.resultadoBuscador}
             />
+            {this.state.noEncontrado && (
+              <Mensaje mensaje="There is no employees" clase="secondary" />
+            )}
           </div>
         </div>
       </div>

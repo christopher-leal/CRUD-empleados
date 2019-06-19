@@ -38,10 +38,10 @@ class ListaEmpleados extends Component {
     const { type, search, place } = this.state;
     const noValido =
       !type ||
-      type === "Choose one" ||
+      type == "Choose one" ||
       !search ||
       !place ||
-      place === "Choose one";
+      place == "Choose one";
     return noValido;
   };
 
@@ -186,7 +186,9 @@ class ListaEmpleados extends Component {
             })}
           </tbody>
         </table>
-        {this.state.borrado && <Mensaje mensaje="Employee deleted!" />}
+        {this.state.borrado && (
+          <Mensaje mensaje="Employee deleted!" clase="warning" />
+        )}
       </div>
     );
   }
