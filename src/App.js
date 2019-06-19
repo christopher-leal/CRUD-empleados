@@ -1,22 +1,16 @@
 import React, { Component } from "react";
 import "./App.css";
-
+import Formulario from "./components/Formulario";
 class App extends Component {
-  state = { users: [] };
-  componentDidMount() {
-    fetch("/users")
-      .then(res => res.json())
-      .then(users => this.setState({ users }));
-  }
   render() {
     return (
-      <div className="App">
-        <h1>Users</h1>
-        <ul>
-          {this.state.users.map(user => (
-            <li key={user.id}>{user.username}</li>
-          ))}
-        </ul>
+      <div>
+        <nav className="navbar navbar-dark bg-dark">
+          <a className="navbar-brand text-white">Empleados Emkode</a>
+        </nav>
+        <div className="container mt-4">
+          <Formulario />
+        </div>
       </div>
     );
   }

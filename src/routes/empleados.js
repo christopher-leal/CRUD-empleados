@@ -4,7 +4,13 @@ const listarEmpleados = async (req, res) => {
   const empleados = await Empleado.findAll();
   res.json(empleados);
 };
-
+const buscarEmpleado = async (req, res) => {
+  const { id } = req.params;
+  const empleado = await Empleado.findAll({
+    where: { id }
+  });
+  res.json(empleado);
+};
 const agregarEmpleado = async (req, res) => {
   const { name, last_name, email, phone } = req.body;
   const empleado = await Empleado.create({
@@ -13,6 +19,7 @@ const agregarEmpleado = async (req, res) => {
     email,
     phone
   });
+  res.json(empleado);
   console.log(empleado);
 };
 const modificarEmpleado = async (req, res) => {
@@ -31,6 +38,7 @@ const modificarEmpleado = async (req, res) => {
       plain: true
     }
   );
+  res.json("Empleado actualizado");
   console.log(filaAfectada);
 };
 const borrarEmpleado = async (req, res) => {
@@ -38,6 +46,7 @@ const borrarEmpleado = async (req, res) => {
   const empleadoEliminado = await Empleado.destroy({
     where: { id }
   });
+  res.json("Empleado borrado");
   console.log(empleadoEliminado);
 };
 
@@ -45,5 +54,6 @@ module.exports = {
   listarEmpleados,
   agregarEmpleado,
   modificarEmpleado,
-  borrarEmpleado
+  borrarEmpleado,
+  buscarEmpleado
 };
